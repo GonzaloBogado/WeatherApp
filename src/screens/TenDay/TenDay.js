@@ -123,13 +123,22 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   containerDaily: {
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: 'dimgray',
-    borderWidth: 2,
     height: 300,
     borderRadius: 20,
     padding: 10,
     paddingHorizontal: 20,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+
+    elevation: 9,
   },
 });

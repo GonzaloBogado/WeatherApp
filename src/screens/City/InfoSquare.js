@@ -18,13 +18,22 @@ export default InfoSquare;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     height: 130,
     width: 130,
     borderRadius: 20,
     shadowOpacity: 0.25,
     shadowRadius: 34,
-    borderWidth: 2,
     padding: 10,
     margin: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+
+    elevation: 9,
   },
 });
