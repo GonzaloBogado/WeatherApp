@@ -60,7 +60,6 @@ const TenDay = (): React$Element<any> => {
       </View>
     );
   const dailyArray = weatherDaily.daily;
-  console.log(weatherInfo);
   return (
     <View style={styles.container}>
       <Texto type="p">Today, {format(today, 'do MMMM')}</Texto>
