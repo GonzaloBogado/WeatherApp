@@ -1,0 +1,16 @@
+{
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "editor.formatOnSave": true,
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.wordBasedSuggestions": false,
+    "workbench.colorTheme": "Oceanic Next (dimmed bg)",
+    "flow.enabled": true,
+    "javascript.validate.enable": false,
+    "javascript.format.enable": false
+  }
+  
