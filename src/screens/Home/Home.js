@@ -10,17 +10,22 @@ import {
   Pressable,
 } from 'react-native';
 import React from 'react';
+import moment from 'moment-timezone';
 import {useEffect, useState} from 'react';
 import useAxios from '../../hooks/useAxios';
 import Texto from '../../components/UI/Texto';
-import {fromUnixTime, format} from 'date-fns';
-import StatusIcon from './StatusIcon';
+import {fromUnixTime, format, getHours} from 'date-fns';
+import StatusAndIcon from './StatusAndIcon';
+import {OPENWEATHERKEY} from 'react-native-dotenv';
+const {zonedTimeToUtc, utcToZonedTime} = require('date-fns-tz');
+import COLORS from '../../constants/colors';
 import svgUrls from '../../constants/svgUrls';
+import {useRoute} from '@react-navigation/native';
+
 import Button from '../../components/UI/Button';
 import {SvgUri} from 'react-native-svg';
-import Hourly from './Hourly';
-import {getHours} from 'date-fns/esm/fp';
-import InfoSquare from './InfoSquare';
+import HourlyInfoBlock from './HourlyInfoBlock';
+import InfoSquare from '../../components/UI/InfoSquare';
 import {useNavigation} from '@react-navigation/native';
 
 interface Props {
@@ -30,11 +35,17 @@ interface Props {
   };
 }
 
-const City = ({userPosition}: Props): React$Element<any> => {
+const City = ({
+  userPosition: userPositionLocation,
+}: Props): React$Element<any> => {
+  const route = useRoute();
+  const userPosition = route.params
+    ? route.params.userPosition
+    : userPositionLocation;
   const [date, setDate] = useState(new Date());
   const [position, setPosition] = useState({});
   const today = new Date();
-  const apiKey = '237407e66f72b98a0a31c51d80f3f5f7';
+  const apiKey = OPENWEATHERKEY;
   const navigation = useNavigation();
   const {
     response: weatherHourly,
@@ -55,13 +66,12 @@ const City = ({userPosition}: Props): React$Element<any> => {
   if (loading || loading2)
     return (
       <View style={styles.container}>
-        <Texto type="title" color="black">
+        <Texto type="title" color={COLORS.main}>
           Loading
         </Texto>
       </View>
     );
   const hourlyArray = weatherHourly.hourly.slice(0, 24);
-
   const pop = weatherHourly.hourly[0].pop * 100;
   const temp = weatherInfo.main.temp;
   const feelsLike = weatherInfo.main.feels_like;
@@ -70,12 +80,23 @@ const City = ({userPosition}: Props): React$Element<any> => {
   const pressure = weatherInfo.main.pressure;
   const humidity = weatherInfo.main.humidity;
   const windSpeed = weatherInfo.wind.speed;
+  const offset: string = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  const zonedDate = utcToZonedTime(
+    new Date(weatherInfo.sys.sunrise * 1000 + weatherInfo.timezone / 60),
+    offset,
+  );
+  const sunrise = moment(weatherInfo.sys.sunrise * 1000)
+    .utcOffset(weatherInfo.timezone / 60)
+    .format('HH:MM');
+  const sunset = moment(weatherInfo.sys.sunset * 1000)
+    .utcOffset(weatherInfo.timezone / 60)
+    .format('HH:MM');
 
   return (
     <View style={styles.container}>
       <Texto type="p">Today, {format(today, 'do MMMM')}</Texto>
-      <Texto type="title">{weatherInfo.name}</Texto>
-      <Texto type="p" color="dimgray">
+      <Texto type="title">{userPosition.name || weatherInfo.name}</Texto>
+      <Texto type="p" color={COLORS.secondary}>
         {weatherInfo.weather[0].main}, {weatherInfo.weather[0].description}
       </Texto>
       <Image
@@ -85,21 +106,25 @@ const City = ({userPosition}: Props): React$Element<any> => {
         }}
       />
       <View style={styles.tempAndIcons}>
-        <StatusIcon svg={svgUrls.rain} text={`${pop} %`} color="dimgray" />
+        <StatusAndIcon
+          svg={svgUrls.rain}
+          text={`${pop} %`}
+          color={COLORS.secondary}
+        />
         <View style={styles.tempBox}>
           <Texto type="temp">{Math.round(temp)}°</Texto>
-          <Texto type="p" color="dimgray">
+          <Texto type="p" color={COLORS.secondary}>
             {' '}
             Feels like: {Math.round(feelsLike)}°
           </Texto>
-          <Texto type="p" color="dimgray">
+          <Texto type="p" color={COLORS.secondary}>
             Min: {Math.round(tempMin)}° Max: {Math.round(tempMax)}°
           </Texto>
         </View>
-        <StatusIcon
+        <StatusAndIcon
           svg={svgUrls.wind}
           text={`${Math.round(windSpeed)} km/h`}
-          color="dimgray"
+          color={COLORS.secondary}
         />
       </View>
       <Button
@@ -107,7 +132,7 @@ const City = ({userPosition}: Props): React$Element<any> => {
           <Pressable
             style={styles.buttonIn}
             onPress={() =>
-              navigation.navigate('TenDays', {
+              navigation.navigate('DailyForecasts', {
                 userPosition: {
                   lat: userPosition.lat,
                   lon: userPosition.lon,
@@ -132,17 +157,20 @@ const City = ({userPosition}: Props): React$Element<any> => {
           data={hourlyArray}
           keyExtractor={item => `${item.dt} ${item.temp}`}
           renderItem={({item, index}) => (
-            <Hourly
-              hour={getHours(new Date(item.dt * 1000))}
+            <HourlyInfoBlock
+              hour={moment(item.dt * 1000)
+                .utcOffset(weatherInfo.timezone / 60)
+                .format('HH')}
               temp={Math.round(item.temp)}
               icon={item.weather[0].icon}
               index={index}
+              //dont know how to
             />
           )}
         />
       </View>
       <View style={styles.squareBlocks}>
-        <ScrollView horizontal>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <InfoSquare
             content={
               <View>
@@ -153,7 +181,7 @@ const City = ({userPosition}: Props): React$Element<any> => {
                     uri={svgUrls.visibility}
                     style={styles.buttonIcon}
                   />
-                  <Texto type="p" color="dimgray">
+                  <Texto type="p" color={COLORS.secondary}>
                     Visibility
                   </Texto>
                 </View>
@@ -161,7 +189,7 @@ const City = ({userPosition}: Props): React$Element<any> => {
                   {Math.round(weatherInfo.visibility / 1000)} km
                 </Texto>
                 <View style={styles.extraText}>
-                  <Texto type="p" color="dimgray">
+                  <Texto type="p" color={COLORS.secondary}>
                     {weatherInfo.weather[0].description} {'     '}
                   </Texto>
                 </View>
@@ -178,7 +206,7 @@ const City = ({userPosition}: Props): React$Element<any> => {
                     uri={svgUrls.humidity}
                     style={styles.buttonIcon}
                   />
-                  <Texto type="p" color="dimgray">
+                  <Texto type="p" color={COLORS.secondary}>
                     Humidity
                   </Texto>
                 </View>
@@ -198,7 +226,7 @@ const City = ({userPosition}: Props): React$Element<any> => {
                     uri={svgUrls.pressure}
                     style={styles.buttonIcon}
                   />
-                  <Texto type="p" color="dimgray">
+                  <Texto type="p" color={COLORS.secondary}>
                     Pressure
                   </Texto>
                 </View>
@@ -218,12 +246,12 @@ const City = ({userPosition}: Props): React$Element<any> => {
                     uri={svgUrls.sunrise}
                     style={styles.buttonIcon}
                   />
-                  <Texto type="p" color="dimgray">
+                  <Texto type="p" color={COLORS.secondary}>
                     Sunrise
                   </Texto>
                 </View>
                 <Texto style={styles.visibility} type="title">
-                  {format(new Date(weatherInfo.sys.sunrise * 1000), 'HH:mm')}h
+                  {sunrise}h
                 </Texto>
                 <View style={styles.flex}>
                   <SvgUri
@@ -232,12 +260,12 @@ const City = ({userPosition}: Props): React$Element<any> => {
                     uri={svgUrls.sunrise}
                     style={styles.buttonIcon}
                   />
-                  <Texto type="p" color="dimgray">
+                  <Texto type="p" color={COLORS.secondary}>
                     Sunrise
                   </Texto>
                 </View>
                 <Texto style={styles.visibility} type="title">
-                  {format(new Date(weatherInfo.sys.sunset * 1000), 'HH:mm')}h
+                  {sunset}h
                 </Texto>
               </>
             }
@@ -257,7 +285,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.background,
   },
   flex: {
     flexDirection: 'row',

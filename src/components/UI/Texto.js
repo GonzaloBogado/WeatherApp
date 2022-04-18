@@ -4,11 +4,11 @@ import React from 'react';
 interface Props {
   type: 'title' | 'p' | 'temp';
   color?: string;
-  children?: any;
+  children: string;
   noMargin?: boolean;
   style?: Object;
 }
-
+import COLORS from '../../constants/colors';
 const Texto = ({
   type,
   color,
@@ -19,7 +19,7 @@ const Texto = ({
   const styles = StyleSheet.create({
     text: {
       fontSize: type === 'title' ? 30 : type === 'temp' ? 55 : 15,
-      color: color || 'black',
+      color: color || COLORS.main,
       fontWeight: type === 'p' ? '300' : '600',
       marginBottom: noMargin ? 0 : 5,
       ...style,

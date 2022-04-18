@@ -3,6 +3,7 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
 import Texto from '../../components/UI/Texto';
+import COLORS from '../../constants/colors';
 interface Props {
   hour: number;
   temp: number;
@@ -10,10 +11,15 @@ interface Props {
   index: number;
 }
 
-const Hourly = ({hour, temp, icon, index}: Props): React$Element<any> => {
+const HourlyInfoBlock = ({
+  hour,
+  temp,
+  icon,
+  index,
+}: Props): React$Element<any> => {
   return (
     <View style={styles.container}>
-      <Texto noMargin type="p" color="dimgray">
+      <Texto noMargin type="p" color={COLORS.secondary}>
         {index === 0 ? 'Now' : `${hour}h`}
       </Texto>
       <Image
@@ -22,14 +28,14 @@ const Hourly = ({hour, temp, icon, index}: Props): React$Element<any> => {
           uri: `https://openweathermap.org/img/wn/${icon}@2x.png`,
         }}
       />
-      <Texto noMargin type="p" color="dimgray">
+      <Texto noMargin type="p" color={COLORS.secondary}>
         {temp}°
       </Texto>
     </View>
   );
 };
 
-export default Hourly;
+export default HourlyInfoBlock;
 
 const styles = StyleSheet.create({
   container: {

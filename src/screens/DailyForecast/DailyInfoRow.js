@@ -12,6 +12,7 @@ interface Props {
 }
 import {SvgUri} from 'react-native-svg';
 import svgUrls from '../../constants/svgUrls';
+import COLORS from '../../constants/colors';
 
 const Daily = ({
   day,
@@ -23,29 +24,28 @@ const Daily = ({
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
-      width: 250,
+      width: 270,
       justifyContent: 'space-between',
       alignItems: 'center',
       marginVertical: 5,
       borderBottomWidth: index === 7 ? 0 : 1,
       paddingVertical: 5,
       paddingHorizontal: 0,
-      marginHorizontal: 10,
     },
     dayText: {
       width: 85,
       fontWeight: index === 0 ? '600' : '300',
-      color: index === 0 ? 'black' : 'dimgray',
+      color: index === 0 ? COLORS.main : COLORS.secondary,
     },
     tempText: {
       width: 60,
       textAlign: 'right',
       fontWeight: index === 0 ? '600' : '300',
-      color: index === 0 ? 'black' : 'dimgray',
+      color: index === 0 ? COLORS.main : COLORS.secondary,
     },
     weatherImage: {
-      width: 36,
-      height: 20,
+      width: 40,
+      height: 30,
     },
   });
   return (

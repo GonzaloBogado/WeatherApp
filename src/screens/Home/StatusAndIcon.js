@@ -11,7 +11,7 @@ interface Props {
   color?: string;
 }
 
-const StatusIcon = ({svg, text, color}: Props): React$Element<any> => {
+const StatusAndIcon = ({svg, text, color}: Props): React$Element<any> => {
   return (
     <>
       <View style={styles.container}>
@@ -24,7 +24,7 @@ const StatusIcon = ({svg, text, color}: Props): React$Element<any> => {
   );
 };
 
-export default StatusIcon;
+export default StatusAndIcon;
 
 const styles = StyleSheet.create({
   container: {

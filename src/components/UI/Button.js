@@ -2,9 +2,9 @@
 
 import {StyleSheet, Text, Pressable} from 'react-native';
 import React from 'react';
-
+import COLORS from '../../constants/colors';
 interface Props {
-  content: any;
+  content: React$Element<any>;
 }
 
 const Button = ({content}: Props): React$Element<any> => {
@@ -19,7 +19,7 @@ export default Button;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.background,
     marginVertical: 14,
     borderRadius: 25,
     paddingVertical: 5,

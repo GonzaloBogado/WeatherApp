@@ -1,18 +1,19 @@
 // @flow
-
+import {LogBox} from 'react-native';
 import React from 'react';
 import {useEffect, useState} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
-import City from './screens/City/City';
-import TenDay from './screens/TenDay/TenDay';
+import Home from './screens/Home/Home';
+import DailyForecast from './screens/DailyForecast/DailyForecast';
 import Error from './screens/Error/Error';
 import RNLocation from 'react-native-location';
 import SearchCity from './screens/SearchCity/SearchCity';
 import Texto from './components/UI/Texto';
 const Stack = createStackNavigator();
+import COLORS from './constants/colors';
 import {SvgUri} from 'react-native-svg';
 import svgUrls from './constants/svgUrls';
 const App = (): React$Element<any> => {
@@ -45,48 +46,62 @@ const App = (): React$Element<any> => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Group screenOptions={{}}>
+        <Stack.Group
+          screenOptions={{
+            headerTintColor: COLORS.main,
+          }}>
           <Stack.Screen
-            name="City"
-            options={({navigation}) => ({
+            name="Home"
+            options={({navigation, route}) => ({
               headerShown: true,
               title: '',
               headerStyle: {
-                backgroundColor: 'white',
+                backgroundColor: COLORS.background,
                 height: 80,
               },
-              headerRight: () => (
-                <Pressable onPress={() => navigation.navigate('SearchCity')}>
-                  <SvgUri
-                    width="20"
-                    height="20"
-                    uri={svgUrls.search}
-                    style={styles.searchIcon}
-                  />
-                </Pressable>
-              ),
+
+              headerRight: () =>
+                route.params ? (
+                  <></>
+                ) : (
+                  <Pressable onPress={() => navigation.navigate('SearchCity')}>
+                    <SvgUri
+                      width="20"
+                      height="20"
+                      uri={svgUrls.search}
+                      style={styles.searchIcon}
+                    />
+                  </Pressable>
+                ),
             })}>
             {props =>
               !userPosition ? (
                 <></>
               ) : (
-                <City {...props} userPosition={userPosition} />
+                <Home {...props} userPosition={userPosition} />
               )
             }
           </Stack.Screen>
           <Stack.Screen
-            name="TenDays"
-            component={TenDay}
+            name="DailyForecasts"
+            component={DailyForecast}
             options={({navigation}) => ({
               headerShown: true,
               title: '',
+
               headerStyle: {
-                backgroundColor: 'white',
+                backgroundColor: COLORS.background,
                 height: 80,
               },
             })}
           />
-          <Stack.Screen name="SearchCity" component={SearchCity} />
+          <Stack.Screen
+            name="SearchCity"
+            component={SearchCity}
+            options={{
+              headerTitle: 'Search City',
+            }}
+          />
           <Stack.Screen name="Error" component={Error} />
         </Stack.Group>
       </Stack.Navigator>
@@ -100,3 +115,5 @@ const styles = StyleSheet.create({
     marginRight: 25,
   },
 });
+
+LogBox.ignoreLogs(["exported from 'deprecated-react-native-prop-types'."]);

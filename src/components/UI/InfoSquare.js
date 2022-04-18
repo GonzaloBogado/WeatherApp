@@ -3,9 +3,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 interface Props {
-  content: any;
+  content: React$Element<any>;
 }
-
+import COLORS from '../../constants/colors';
 const InfoSquare = ({content}: Props): React$Element<any> => {
   return (
     <View style={styles.container}>
@@ -18,7 +18,7 @@ export default InfoSquare;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: COLORS.background,
     height: 130,
     width: 130,
     borderRadius: 20,

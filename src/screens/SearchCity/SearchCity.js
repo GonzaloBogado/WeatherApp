@@ -22,6 +22,10 @@ const styles = StyleSheet.create({
   suggestions: {
     backgroundColor: 'blue',
   },
+  title: {
+    padding: 10,
+    textAlign: 'center',
+  },
 });
 
 export default SearchCity;

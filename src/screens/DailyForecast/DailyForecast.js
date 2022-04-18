@@ -12,6 +12,7 @@ import {
 import React from 'react';
 import {useEffect, useState} from 'react';
 import useAxios from '../../hooks/useAxios';
+import COLORS from '../../constants/colors';
 import Texto from '../../components/UI/Texto';
 import {fromUnixTime, format} from 'date-fns';
 import svgUrls from '../../constants/svgUrls';
@@ -20,7 +21,9 @@ import {getHours} from 'date-fns/esm/fp';
 import {useNavigation} from '@react-navigation/native';
 import {useRoute} from '@react-navigation/native';
 import MapView, {Marker} from 'react-native-maps';
-import Daily from './Daily';
+import {OPENWEATHERKEY} from 'react-native-dotenv';
+import DailyInfoRow from './DailyInfoRow';
+import HorizontalList from '../../components/HorizontalList';
 interface Props {
   userPosition: {
     lat: string,
@@ -29,11 +32,11 @@ interface Props {
   };
 }
 
-const TenDay = (): React$Element<any> => {
+const DailyForecast = (): React$Element<any> => {
   const route = useRoute();
   const userPosition = route.params.userPosition;
   const today = new Date();
-  const apiKey = '237407e66f72b98a0a31c51d80f3f5f7';
+  const apiKey = OPENWEATHERKEY;
   const navigation = useNavigation();
   const {
     response: weatherDaily,
@@ -54,7 +57,7 @@ const TenDay = (): React$Element<any> => {
   if (loading || loading2)
     return (
       <View style={styles.container}>
-        <Texto type="title" color="black">
+        <Texto type="title" color={COLORS.main}>
           Loading
         </Texto>
       </View>
@@ -82,27 +85,38 @@ const TenDay = (): React$Element<any> => {
           title={userPosition.name || weatherInfo.name}
         />
       </MapView>
-      <Texto type="p" color="dimgray">
+      <Texto type="p" color={COLORS.secondary}>
         10-day forecast
       </Texto>
       <View style={styles.containerDaily}>
         <FlatList
           data={dailyArray}
+          showsVerticalScrollIndicator={false}
           renderItem={({item, index}) => (
-            <Daily
+            <DailyInfoRow
               day={format(new Date(item.dt * 1000), 'EEEE')}
               icon={item.weather[0].icon}
               maxTemp={Math.round(item.temp.max)}
               minTemp={Math.round(item.temp.min)}
               index={index}
+              //all of this props are item dependant, how do I
+              //pass that to every specific item when rendering
             />
+            /* <HorizontalList
+              data={dailyArray}
+              day=?
+              icon=?
+              maxTemp=?
+              minTemp=?
+              index=?
+            /> */
           )}></FlatList>
       </View>
     </View>
   );
 };
 
-export default TenDay;
+export default DailyForecast;
 
 const styles = StyleSheet.create({
   container: {
@@ -111,7 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: COLORS.background,
   },
   flex: {
     flexDirection: 'row',
@@ -126,11 +140,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 300,
+    height: 330,
     borderRadius: 20,
     padding: 10,
     paddingHorizontal: 20,
-    backgroundColor: 'white',
+    backgroundColor: COLORS.background,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
